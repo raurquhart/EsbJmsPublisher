@@ -1,4 +1,4 @@
-package edu.internet2.middleware.grouper.jms;
+package edu.internet2.middleware.grouper.changeLog.esb.consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Simple sender that is autowired with the JMSTemplate bean and the queue name.
- # Copied to  /opt/grouper/src/grouper/edu/internet2/middleware/grouper/jms/JmsConnectionBean.java
+ * Copied to /opt/grouper/src/esb/edu/internet2/middleware/grouper/changeLog/esb/consumer
  */
 @Component
 public class JmsConnectionBean
