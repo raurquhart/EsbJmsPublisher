@@ -11,7 +11,7 @@ import edu.internet2.middleware.grouper.esb.listener.EsbListenerBase;
 import edu.internet2.middleware.grouper.util.GrouperUtil;
 import org.springframework.context.*;
 import org.springframework.context.support.*;
-import edu.internet2.middleware.grouper.jms.JmsConnectionBean;
+import edu.internet2.middleware.grouper.changeLog.esb.consumer.JmsConnectionBean;
 
 /**
  * 
