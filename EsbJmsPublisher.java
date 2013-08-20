@@ -25,7 +25,7 @@ public class EsbJmsPublisher extends EsbListenerBase {
   private static final Log LOG = GrouperUtil.getLog(EsbJmsPublisher.class);
 
   private ApplicationContext applicationContext;
-  private JmsConnectionBean jmsConnectionBean;
+  private static JmsConnectionBean jmsConnectionBean;
 
   /**
    * @see EsbListenerBase#dispatchEvent(String, String)
