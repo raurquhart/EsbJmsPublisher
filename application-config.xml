@@ -23,13 +23,10 @@ http://www.springframework.org/schema/jms/spring-jms-2.5.xsd ">
 	<!-- creates an activemq connection factory using the amq namespace -->
 	<amq:connectionFactory id="amqConnectionFactory" brokerURL="${jms.url}" userName="${jms.username}" password="${jms.password}" />
 	<!-- CachingConnectionFactory Definition, sessionCacheSize property is the number of sessions to cache -->
-	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
-		<property name="connectionFactory">
-			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-		        <constructor-arg ref="amqConnectionFactory" />
-		    </bean>
-		</property>
+	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		<constructor-arg ref="amqConnectionFactory" />
 		<!-- property name="exceptionListener" ref="jmsExceptionListener" /> -->
+		<property name="sessionCacheSize" value="10" />
 	</bean>
 	<!-- JmsTemplate Definition -->
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
