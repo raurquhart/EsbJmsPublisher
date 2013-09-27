@@ -11,7 +11,7 @@ import edu.internet2.middleware.grouper.esb.listener.EsbListenerBase;
 import edu.internet2.middleware.grouper.util.GrouperUtil;
 import org.springframework.context.*;
 import org.springframework.context.support.*;
-import edu.internet2.middleware.grouper.changeLog.esb.consumer.JmsConnectionBean;
+import ca.sfu.icat.jms.JmsMessageSender;
 
 /**
  * 
@@ -21,11 +21,18 @@ import edu.internet2.middleware.grouper.changeLog.esb.consumer.JmsConnectionBean
  */
 public class EsbJmsPublisher extends EsbListenerBase {
 
-  /** */
-  private static final Log LOG = GrouperUtil.getLog(EsbJmsPublisher.class);
+  private static Log LOG; 
+  private static JmsMessageSender jmsMessageSender;
 
-  private ApplicationContext applicationContext;
-  private static JmsConnectionBean jmsConnectionBean;
+  public EsbJmsPublisher() {
+    super();
+    if (LOG == null) {
+      LOG = GrouperUtil.getLog(EsbJmsPublisher.class);
+    }
+    if (jmsMessageSender == null) {
+      jmsMessageSender = new JmsMessageSender("Grouper", "ICAT.grouper.events", LOG);
+    }
+  }
 
   /**
    * @see EsbListenerBase#dispatchEvent(String, String)
@@ -34,25 +41,11 @@ public class EsbJmsPublisher extends EsbListenerBase {
   public boolean dispatchEvent(String eventJsonString, String consumerName) {
 
     if (LOG.isDebugEnabled()) {
-      LOG.debug("Consumer " + consumerName + " publishing "
+      LOG.info("Consumer " + consumerName + " publishing "
           + GrouperUtil.indent(eventJsonString, false));
     }
 
-    if (applicationContext == null) {
-        String contextFileName = GrouperLoaderConfig.getPropertyString("changeLog.consumer."
-        + consumerName + ".publisher.springContextFileName", "");
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Consumer " + consumerName + " loading Spring config from "
-          + contextFileName);
-    }
-        applicationContext = new ClassPathXmlApplicationContext("file:" + contextFileName);
-    }
-    
-    if (jmsConnectionBean==null) {
-        jmsConnectionBean = (JmsConnectionBean)applicationContext.getBean("jmsConnectionBean");
-    }
-
-    jmsConnectionBean.send(eventJsonString);
+    jmsMessageSender.send(eventJsonString);
     
     if (LOG.isDebugEnabled()) {
       LOG.debug("ESB JMS client " + consumerName + " sent message");
@@ -65,6 +58,9 @@ public class EsbJmsPublisher extends EsbListenerBase {
    */
   @Override
   public void disconnect() {
-    //do nothing, keep xmpp connections open a little longer
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("ESB JMS client disconnect()");
+    }
+    //do nothing
   }
 }
