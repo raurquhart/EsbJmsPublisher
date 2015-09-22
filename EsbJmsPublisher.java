@@ -52,9 +52,7 @@ public class EsbJmsPublisher extends EsbListenerBase {
      */
     @Override
     public boolean dispatchEvent(String eventJsonString, String consumerName) {
-        String isADGroupAttr = "0";
         boolean isADGroup = false;
-        String isSADGroupAttr = "0";
         boolean isSADGroup = false;
         Group group;
 
@@ -66,6 +64,7 @@ public class EsbJmsPublisher extends EsbListenerBase {
         EsbEvent esbEvent = esbEvents.getEsbEvent()[0];
         String groupname = esbEvent.groupnameToModify();
 
+/*
         if (esbEvent.isMembershipEvent() && esbEvent.isGrouperSourceId()) {
             String subjectId = esbEvent.getSubjectId();
             Group memberGroup = GrouperDAOFactory.getFactory().getGroup().findByUuid(subjectId, false);
@@ -75,6 +74,7 @@ public class EsbJmsPublisher extends EsbListenerBase {
             //esbEvent.setSubjectId(groupName);
             //eventJsonString = messageConverter.fromEsbEvent(esbEvent);
         }
+*/
 
         group = GrouperDAOFactory.getFactory().getGroup().findByName(groupname, false, null);
         if (group == null) {
@@ -96,24 +96,22 @@ public class EsbJmsPublisher extends EsbListenerBase {
         if (isADGroup) {
             // Create a new ad_group_change message and send it
             ADGroupUpdateEvent adEvent = new ADGroupUpdateEvent(groupname);
-            //eventJsonString = messageConverter.fromEsbEvent(adEvent);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending AD message: " + adEvent);
             }
             if (!send(adEvent)) {
-                LOG.info("Error sending jms message: " + adEvent);
+                LOG.info("Error sending AD jms message: " + adEvent);
             }
         }
         if (isSADGroup) {
             // Create a new sad_group_change message and send it
             SADGroupUpdateEvent adEvent = new SADGroupUpdateEvent(groupname);
-            eventJsonString = messageConverter.fromEsbEvent(adEvent);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending SAD message: " + eventJsonString);
             }
-            //if (!send(eventJsonString)) {
-            //  LOG.info("Error sending jms message: " + eventJsonString);
-            //}
+            if (!send(adEvent)) {
+                LOG.info("Error sending SAD jms message: " + adEvent);
+            }
         }
 
         return true;
